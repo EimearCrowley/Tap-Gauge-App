@@ -64,13 +64,11 @@
         android:orientation="vertical"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/startScanButton"
-        app:layout_constraintBottom_toTopOf="@id/mtuLogo"
+        app:layout_constraintBottom_toTopOf="@id/recordButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="40dp">
+        android:layout_marginTop="20dp">
 
-        <!-- Temperature -->
         <TextView
             android:id="@+id/tempLabel"
             android:layout_width="wrap_content"
@@ -89,7 +87,6 @@
             android:textColor="@android:color/black"
             android:layout_marginBottom="30dp"/>
 
-        <!-- Humidity -->
         <TextView
             android:id="@+id/humLabel"
             android:layout_width="wrap_content"
@@ -108,6 +105,19 @@
             android:textColor="@android:color/black"/>
     </LinearLayout>
 
+    <!-- Record Data Button (hidden until reading exists) -->
+    <Button
+        android:id="@+id/recordButton"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:text="Record Data"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/outputContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
+
     <!-- Bottom MTU Logo -->
     <ImageView
         android:id="@+id/mtuLogo"
@@ -120,4 +130,5 @@
         android:layout_marginBottom="20dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
 

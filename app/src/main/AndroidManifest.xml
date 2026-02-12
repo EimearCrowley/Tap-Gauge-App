@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ThermoCase">
 
+        <activity android:name=".RoomDataActivity" />
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

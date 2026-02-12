@@ -1,5 +1,6 @@
 package com.example.thermocase
 
+import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Intent
 import android.nfc.NdefMessage
@@ -8,9 +9,14 @@ import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.Ndef
 import android.os.Bundle
-import android.widget.TextView
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import org.json.JSONArray
+import org.json.JSONObject
 import java.nio.charset.Charset
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +24,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var tempValue: TextView
     private lateinit var humValue: TextView
+    private lateinit var recordButton: Button
+
+    private var lastTemp: String? = null
+    private var lastHum: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,22 +35,17 @@ class MainActivity : AppCompatActivity() {
 
         tempValue = findViewById(R.id.tempValue)
         humValue = findViewById(R.id.humValue)
+        recordButton = findViewById(R.id.recordButton)
+
+        recordButton.setOnClickListener { showRoomDialog() }
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
-
-        // Default placeholder values
-        tempValue.text = "-- °C"
-        humValue.text = "-- %"
     }
 
     override fun onResume() {
         super.onResume()
-
         val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent, PendingIntent.FLAG_MUTABLE
-        )
-
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
         nfcAdapter?.enableForegroundDispatch(this, pendingIntent, null, null)
     }
 
@@ -65,13 +70,17 @@ class MainActivity : AppCompatActivity() {
 
         tempValue.text = "$temp °C"
         humValue.text = "$hum %"
+
+        lastTemp = temp
+        lastHum = hum
+
+        recordButton.visibility = View.VISIBLE
     }
 
     private fun extractText(message: NdefMessage): String? {
         for (record in message.records) {
             if (record.tnf == NdefRecord.TNF_WELL_KNOWN &&
-                record.type.contentEquals(NdefRecord.RTD_TEXT)
-            ) {
+                record.type.contentEquals(NdefRecord.RTD_TEXT)) {
                 return decodeTextRecord(record)
             }
         }
@@ -91,16 +100,67 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun parseValues(text: String): Pair<String, String>? {
-        return if (text.contains(",")) {
-            val parts = text.split(",")
-            val temp = parts.getOrNull(0) ?: return null
-            val hum = parts.getOrNull(1) ?: return null
-            Pair(temp, hum)
+        val regex = Regex("""([0-9]+(\.[0-9]+)?)""")
+        val nums = regex.findAll(text).map { it.value }.toList()
+        return if (nums.size >= 2) Pair(nums[0], nums[1]) else null
+    }
+
+    private fun showRoomDialog() {
+        val prefs = getSharedPreferences("rooms", MODE_PRIVATE)
+        val roomsJson = prefs.getString("data", "{}")
+        val rooms = JSONObject(roomsJson!!)
+
+        val roomNames = rooms.keys().asSequence().toList()
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_room, null)
+        val roomInput = dialogView.findViewById<EditText>(R.id.roomInput)
+        val roomSpinner = dialogView.findViewById<Spinner>(R.id.roomSpinner)
+
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, roomNames)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        roomSpinner.adapter = adapter
+
+        AlertDialog.Builder(this)
+            .setTitle("Select or Create Room")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                val typedName = roomInput.text.toString().trim()
+                val selectedName = roomSpinner.selectedItem?.toString()
+                val roomName = if (typedName.isNotEmpty()) typedName else selectedName
+                if (roomName != null) saveReading(roomName)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun saveReading(roomName: String) {
+        val prefs = getSharedPreferences("rooms", MODE_PRIVATE)
+        val roomsJson = prefs.getString("data", "{}")
+        val rooms = JSONObject(roomsJson!!)
+
+        val readings = if (rooms.has(roomName)) {
+            rooms.getJSONArray(roomName)
         } else {
-            val regex = Regex("""([0-9]+(\.[0-9]+)?)""")
-            val nums = regex.findAll(text).map { it.value }.toList()
-            if (nums.size >= 2) Pair(nums[0], nums[1]) else null
+            JSONArray()
         }
+
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            .format(Date())
+
+        val reading = JSONObject().apply {
+            put("temp", lastTemp)
+            put("hum", lastHum)
+            put("time", timestamp)
+        }
+
+        readings.put(reading)
+        rooms.put(roomName, readings)
+
+        prefs.edit().putString("data", rooms.toString()).apply()
+
+        val intent = Intent(this, RoomDataActivity::class.java)
+        intent.putExtra("roomName", roomName)
+        startActivity(intent)
     }
 }
 
