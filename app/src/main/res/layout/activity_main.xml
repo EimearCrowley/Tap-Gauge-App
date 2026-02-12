@@ -6,11 +6,11 @@
     android:layout_height="match_parent"
     android:background="@drawable/background">
 
-    <!-- ThermoCase Logo (Bigger) -->
+    <!-- Top Logo -->
     <ImageView
         android:id="@+id/logoImage"
-        android:layout_width="220dp"
-        android:layout_height="220dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:src="@drawable/tyndall_logo"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,13 +23,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ThermoCase"
-        android:textSize="32sp"
+        android:textSize="30sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
         app:layout_constraintTop_toBottomOf="@id/logoImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp"/>
+        android:layout_marginTop="10dp"/>
 
     <!-- Subtitle -->
     <TextView
@@ -37,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="NFC Temperature and Humidity Reader"
-        android:textSize="17sp"
+        android:textSize="16sp"
         android:textColor="@android:color/black"
         app:layout_constraintTop_toBottomOf="@id/titleText"
         app:layout_constraintStart_toStartOf="parent"
@@ -54,9 +54,9 @@
         app:layout_constraintTop_toBottomOf="@id/subtitleText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="40dp"/>
+        android:layout_marginTop="30dp"/>
 
-    <!-- Output Container (centres readings) -->
+    <!-- Output Section -->
     <LinearLayout
         android:id="@+id/outputContainer"
         android:layout_width="wrap_content"
@@ -64,26 +64,55 @@
         android:orientation="vertical"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/startScanButton"
+        app:layout_constraintBottom_toTopOf="@id/mtuLogo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="40dp">
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="40dp">
 
+        <!-- Temperature -->
         <TextView
-            android:id="@+id/outputText"
+            android:id="@+id/tempLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tap an NFC tag"
-            android:textSize="22sp"
+            android:text="Temperature"
+            android:textSize="20sp"
             android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/tempValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-- °C"
+            android:textSize="26sp"
             android:textColor="@android:color/black"
-            android:gravity="center"/>
+            android:layout_marginBottom="30dp"/>
+
+        <!-- Humidity -->
+        <TextView
+            android:id="@+id/humLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Humidity"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/humValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-- %"
+            android:textSize="26sp"
+            android:textColor="@android:color/black"/>
     </LinearLayout>
 
-    <!-- MTU Logo (Bigger) -->
+    <!-- Bottom MTU Logo -->
     <ImageView
         android:id="@+id/mtuLogo"
-        android:layout_width="220dp"
-        android:layout_height="110dp"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
         android:src="@drawable/mtu_logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -91,5 +120,4 @@
         android:layout_marginBottom="20dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
 

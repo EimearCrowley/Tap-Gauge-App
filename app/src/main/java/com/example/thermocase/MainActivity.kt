@@ -15,16 +15,22 @@ import java.nio.charset.Charset
 class MainActivity : AppCompatActivity() {
 
     private var nfcAdapter: NfcAdapter? = null
-    private lateinit var outputText: TextView
+
+    private lateinit var tempValue: TextView
+    private lateinit var humValue: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        outputText = findViewById(R.id.outputText)
+        tempValue = findViewById(R.id.tempValue)
+        humValue = findViewById(R.id.humValue)
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
-        outputText.text = "Tap an NFC Thermo‑Case tag"
+
+        // Default placeholder values
+        tempValue.text = "-- °C"
+        humValue.text = "-- %"
     }
 
     override fun onResume() {
@@ -47,22 +53,18 @@ class MainActivity : AppCompatActivity() {
         super.onNewIntent(intent)
 
         val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
-        val ndef = Ndef.get(tag)
-
-        // If tag is not NDEF, ignore silently
-        if (ndef == null) return
+        val ndef = Ndef.get(tag) ?: return
 
         ndef.connect()
         val message = ndef.ndefMessage ?: ndef.cachedNdefMessage
         ndef.close()
 
-        // If no message, ignore silently
-        if (message == null) return
+        val text = message?.let { extractText(it) } ?: return
 
-        val text = extractText(message) ?: return
+        val (temp, hum) = parseValues(text) ?: return
 
-        // Only update UI if valid text was found
-        outputText.text = parse(text)
+        tempValue.text = "$temp °C"
+        humValue.text = "$hum %"
     }
 
     private fun extractText(message: NdefMessage): String? {
@@ -88,24 +90,20 @@ class MainActivity : AppCompatActivity() {
         return String(textBytes, charset)
     }
 
-    private fun parse(text: String): String {
+    private fun parseValues(text: String): Pair<String, String>? {
         return if (text.contains(",")) {
             val parts = text.split(",")
-            val temp = parts.getOrNull(0) ?: "?"
-            val hum = parts.getOrNull(1) ?: "?"
-            "Temperature: $temp °C\nHumidity: $hum %"
+            val temp = parts.getOrNull(0) ?: return null
+            val hum = parts.getOrNull(1) ?: return null
+            Pair(temp, hum)
         } else {
             val regex = Regex("""([0-9]+(\.[0-9]+)?)""")
             val nums = regex.findAll(text).map { it.value }.toList()
-
-            if (nums.size >= 2) {
-                "Temperature: ${nums[0]} °C\nHumidity: ${nums[1]} %"
-            } else {
-                "Raw data: $text"
-            }
+            if (nums.size >= 2) Pair(nums[0], nums[1]) else null
         }
     }
 }
+
 
 
 
