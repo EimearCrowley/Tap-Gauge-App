@@ -49,27 +49,20 @@ class MainActivity : AppCompatActivity() {
         val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
         val ndef = Ndef.get(tag)
 
-        if (ndef == null) {
-            outputText.text = "Tag detected, but no NDEF data"
-            return
-        }
+        // If tag is not NDEF, ignore silently
+        if (ndef == null) return
 
         ndef.connect()
         val message = ndef.ndefMessage ?: ndef.cachedNdefMessage
         ndef.close()
 
-        if (message == null) {
-            outputText.text = "Empty NDEF message"
-            return
-        }
+        // If no message, ignore silently
+        if (message == null) return
 
-        val text = extractText(message)
+        val text = extractText(message) ?: return
 
-        if (text == null) {
-            outputText.text = "No text record found"
-        } else {
-            outputText.text = parse(text)
-        }
+        // Only update UI if valid text was found
+        outputText.text = parse(text)
     }
 
     private fun extractText(message: NdefMessage): String? {
@@ -96,11 +89,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun parse(text: String): String {
-        // Supports formats like:
-        // "22,45"
-        // "22.5,45.2"
-        // "Temperature: 22.5\nRelative Humidity: 45.2"
-
         return if (text.contains(",")) {
             val parts = text.split(",")
             val temp = parts.getOrNull(0) ?: "?"
@@ -118,6 +106,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
 
 
 
