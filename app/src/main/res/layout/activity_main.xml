@@ -44,6 +44,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="4dp"/>
 
+    <!-- Start Scan Button -->
+    <Button
+        android:id="@+id/startScanButton"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:text="Start Scan"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/subtitleText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
+
     <!-- Output Section -->
     <LinearLayout
         android:id="@+id/outputContainer"
@@ -51,10 +63,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/subtitleText"
+        app:layout_constraintTop_toBottomOf="@id/startScanButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="30dp">
+        android:layout_marginTop="20dp">
 
         <TextView
             android:id="@+id/tempLabel"
@@ -117,6 +129,7 @@
         android:layout_marginBottom="20dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
 

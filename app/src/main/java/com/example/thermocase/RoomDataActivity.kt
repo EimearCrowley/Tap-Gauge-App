@@ -1,18 +1,12 @@
 package com.example.thermocase
 
-import android.content.Intent
-import android.graphics.Color
+import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import android.widget.*
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.ValueFormatter
 import org.json.JSONObject
 
@@ -21,9 +15,7 @@ class RoomDataActivity : AppCompatActivity() {
     class TimeAxisFormatter(private val timestamps: List<String>) : ValueFormatter() {
         override fun getFormattedValue(value: Float): String {
             val index = value.toInt()
-            return if (index in timestamps.indices) {
-                timestamps[index]
-            } else ""
+            return if (index in timestamps.indices) timestamps[index] else ""
         }
     }
 
@@ -42,15 +34,10 @@ class RoomDataActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("rooms", MODE_PRIVATE)
         val roomsJson = prefs.getString("data", "{}")
         val rooms = JSONObject(roomsJson!!)
-
         val readings = rooms.getJSONArray(roomName)
 
-        // -----------------------------
-        // DISPLAY ALL READINGS
-        // -----------------------------
         for (i in 0 until readings.length()) {
             val r = readings.getJSONObject(i)
-
             val tv = TextView(this)
             tv.text =
                 "Temp: ${r.getString("temp")} °C\n" +
@@ -58,13 +45,9 @@ class RoomDataActivity : AppCompatActivity() {
                         "Time: ${r.getString("time")}"
             tv.textSize = 18f
             tv.setPadding(0, 0, 0, 30)
-
             readingContainer.addView(tv)
         }
 
-        // -----------------------------
-        // BUILD GRAPHS
-        // -----------------------------
         val tempChart = findViewById<LineChart>(R.id.tempChart)
         val humChart = findViewById<LineChart>(R.id.humChart)
 
@@ -79,19 +62,8 @@ class RoomDataActivity : AppCompatActivity() {
             timestamps.add(r.getString("time"))
         }
 
-        val tempDataSet = LineDataSet(tempEntries, "Temperature (°C)").apply {
-            color = Color.RED
-            valueTextSize = 10f
-            lineWidth = 2f
-            circleRadius = 3f
-        }
-
-        val humDataSet = LineDataSet(humEntries, "Humidity (%)").apply {
-            color = Color.BLUE
-            valueTextSize = 10f
-            lineWidth = 2f
-            circleRadius = 3f
-        }
+        val tempDataSet = LineDataSet(tempEntries, "Temperature (°C)")
+        val humDataSet = LineDataSet(humEntries, "Humidity (%)")
 
         tempChart.data = LineData(tempDataSet)
         humChart.data = LineData(humDataSet)
@@ -104,15 +76,11 @@ class RoomDataActivity : AppCompatActivity() {
                 position = XAxis.XAxisPosition.BOTTOM
                 granularity = 1f
                 labelRotationAngle = -45f
-                setLabelCount(4, false)   // show every 4th label
-                textSize = 10f
+                setLabelCount(4, false)
             }
-
             chart.setPinchZoom(true)
             chart.isDragEnabled = true
             chart.setScaleEnabled(true)
-            chart.setScaleXEnabled(true)
-            chart.setScaleYEnabled(true)
             chart.description.isEnabled = false
             chart.invalidate()
         }
@@ -120,14 +88,18 @@ class RoomDataActivity : AppCompatActivity() {
         setupChart(tempChart)
         setupChart(humChart)
 
-        // -----------------------------
-        // HOME BUTTON
-        // -----------------------------
-        homeButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            startActivity(intent)
-        }
+        homeButton.setOnClickListener { finish() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        NfcAdapter.getDefaultAdapter(this)?.disableForegroundDispatch(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        NfcAdapter.getDefaultAdapter(this)?.disableForegroundDispatch(this)
     }
 }
+
 

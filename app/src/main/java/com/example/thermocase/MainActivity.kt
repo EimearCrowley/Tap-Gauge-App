@@ -27,9 +27,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tempValue: TextView
     private lateinit var humValue: TextView
     private lateinit var recordButton: Button
+    private lateinit var startScanButton: Button
 
     private var lastTemp: String? = null
     private var lastHum: String? = null
+
+    private var isScanning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,8 +41,25 @@ class MainActivity : AppCompatActivity() {
         tempValue = findViewById(R.id.tempValue)
         humValue = findViewById(R.id.humValue)
         recordButton = findViewById(R.id.recordButton)
+        startScanButton = findViewById(R.id.startScanButton)
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
+
+        // Start / Stop scanning toggle
+        startScanButton.setOnClickListener {
+            if (!isScanning) {
+                isScanning = true
+                startScanButton.text = "Stop Scanning"
+                recordButton.visibility = View.GONE
+                tempValue.text = "-- °C"
+                humValue.text = "-- %"
+                Toast.makeText(this, "Ready to scan NFC tag", Toast.LENGTH_SHORT).show()
+            } else {
+                isScanning = false
+                startScanButton.text = "Start Scan"
+                Toast.makeText(this, "Scanning stopped", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         recordButton.setOnClickListener { showRoomDialog() }
     }
@@ -47,14 +67,14 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        // Delay dispatch slightly to avoid Samsung stealing the tag on launch
+        // Delay foreground dispatch by 1 second to prevent Samsung NFC hijack
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             val pendingIntent = PendingIntent.getActivity(
                 this, 0, intent, PendingIntent.FLAG_MUTABLE
             )
             nfcAdapter?.enableForegroundDispatch(this, pendingIntent, null, null)
-        }, 500)
+        }, 1000)
     }
 
     override fun onPause() {
@@ -64,6 +84,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+
+        if (!isScanning) return
 
         val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
         val ndef = Ndef.get(tag) ?: return
@@ -83,6 +105,9 @@ class MainActivity : AppCompatActivity() {
         lastHum = hum
 
         recordButton.visibility = View.VISIBLE
+
+        isScanning = false
+        startScanButton.text = "Start Scan"
     }
 
     private fun extractText(message: NdefMessage): String? {
@@ -142,6 +167,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveReading(roomName: String) {
+        // STOP SCANNING BEFORE LEAVING MAINACTIVITY
+        isScanning = false
+        nfcAdapter?.disableForegroundDispatch(this)
+
         val prefs = getSharedPreferences("rooms", MODE_PRIVATE)
         val roomsJson = prefs.getString("data", "{}")
         val rooms = JSONObject(roomsJson!!)
@@ -170,7 +199,9 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("roomName", roomName)
         startActivity(intent)
     }
+
 }
+
 
 
 
