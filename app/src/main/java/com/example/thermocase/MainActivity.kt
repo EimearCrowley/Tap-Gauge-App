@@ -201,7 +201,3 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
-
-
-
-
