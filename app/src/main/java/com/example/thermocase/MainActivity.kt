@@ -167,10 +167,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveReading(roomName: String) {
-        // STOP SCANNING BEFORE LEAVING MAINACTIVITY
-        isScanning = false
-        nfcAdapter?.disableForegroundDispatch(this)
-
         val prefs = getSharedPreferences("rooms", MODE_PRIVATE)
         val roomsJson = prefs.getString("data", "{}")
         val rooms = JSONObject(roomsJson!!)
@@ -199,5 +195,4 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("roomName", roomName)
         startActivity(intent)
     }
-
 }
