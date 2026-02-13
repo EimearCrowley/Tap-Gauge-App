@@ -21,12 +21,32 @@
             android:textColor="@android:color/black"
             android:layout_marginBottom="20dp"/>
 
+        <!-- Temperature Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Temperature"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="10dp"/>
+
         <!-- Temperature Graph -->
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/tempChart"
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:layout_marginBottom="30dp"/>
+
+        <!-- Humidity Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Humidity"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="10dp"/>
 
         <!-- Humidity Graph -->
         <com.github.mikephil.charting.charts.LineChart
