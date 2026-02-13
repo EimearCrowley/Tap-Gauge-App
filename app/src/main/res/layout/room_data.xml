@@ -35,12 +35,12 @@
             android:layout_height="250dp"
             android:layout_marginBottom="30dp"/>
 
-        <!-- List of readings -->
-        <ListView
-            android:id="@+id/readingList"
+        <!-- Readings Container -->
+        <LinearLayout
+            android:id="@+id/readingContainer"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:dividerHeight="12dp"/>
+            android:layout_height="wrap_content" />
 
         <!-- Home Button -->
         <Button

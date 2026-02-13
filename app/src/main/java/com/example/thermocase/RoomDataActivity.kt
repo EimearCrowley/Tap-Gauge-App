@@ -3,9 +3,9 @@ package com.example.thermocase
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.widget.ArrayAdapter
+import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ListView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.charts.LineChart
@@ -18,7 +18,6 @@ import org.json.JSONObject
 
 class RoomDataActivity : AppCompatActivity() {
 
-    // Formatter for X-axis timestamps
     class TimeAxisFormatter(private val timestamps: List<String>) : ValueFormatter() {
         override fun getFormattedValue(value: Float): String {
             val index = value.toInt()
@@ -35,7 +34,7 @@ class RoomDataActivity : AppCompatActivity() {
         val roomName = intent.getStringExtra("roomName") ?: return
 
         val title = findViewById<TextView>(R.id.roomTitle)
-        val listView = findViewById<ListView>(R.id.readingList)
+        val readingContainer = findViewById<LinearLayout>(R.id.readingContainer)
         val homeButton = findViewById<Button>(R.id.homeButton)
 
         title.text = roomName
@@ -47,23 +46,24 @@ class RoomDataActivity : AppCompatActivity() {
         val readings = rooms.getJSONArray(roomName)
 
         // -----------------------------
-        // Build list of readings (existing)
+        // DISPLAY ALL READINGS
         // -----------------------------
-        val items = mutableListOf<String>()
         for (i in 0 until readings.length()) {
             val r = readings.getJSONObject(i)
-            items.add(
+
+            val tv = TextView(this)
+            tv.text =
                 "Temp: ${r.getString("temp")} °C\n" +
                         "Hum: ${r.getString("hum")} %\n" +
                         "Time: ${r.getString("time")}"
-            )
+            tv.textSize = 18f
+            tv.setPadding(0, 0, 0, 30)
+
+            readingContainer.addView(tv)
         }
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, items)
-        listView.adapter = adapter
-
         // -----------------------------
-        // Build Graphs
+        // BUILD GRAPHS
         // -----------------------------
         val tempChart = findViewById<LineChart>(R.id.tempChart)
         val humChart = findViewById<LineChart>(R.id.humChart)
@@ -74,54 +74,54 @@ class RoomDataActivity : AppCompatActivity() {
 
         for (i in 0 until readings.length()) {
             val r = readings.getJSONObject(i)
-            val temp = r.getString("temp").toFloat()
-            val hum = r.getString("hum").toFloat()
-            val time = r.getString("time")
-
-            tempEntries.add(Entry(i.toFloat(), temp))
-            humEntries.add(Entry(i.toFloat(), hum))
-            timestamps.add(time)
+            tempEntries.add(Entry(i.toFloat(), r.getString("temp").toFloat()))
+            humEntries.add(Entry(i.toFloat(), r.getString("hum").toFloat()))
+            timestamps.add(r.getString("time"))
         }
 
         val tempDataSet = LineDataSet(tempEntries, "Temperature (°C)").apply {
             color = Color.RED
-            valueTextSize = 12f
+            valueTextSize = 10f
             lineWidth = 2f
-            circleRadius = 4f
+            circleRadius = 3f
         }
 
         val humDataSet = LineDataSet(humEntries, "Humidity (%)").apply {
             color = Color.BLUE
-            valueTextSize = 12f
+            valueTextSize = 10f
             lineWidth = 2f
-            circleRadius = 4f
+            circleRadius = 3f
         }
 
         tempChart.data = LineData(tempDataSet)
         humChart.data = LineData(humDataSet)
 
-        // Apply timestamp formatter
         val formatter = TimeAxisFormatter(timestamps)
 
-        tempChart.xAxis.apply {
-            valueFormatter = formatter
-            position = XAxis.XAxisPosition.BOTTOM
-            granularity = 1f
-            textSize = 10f
+        fun setupChart(chart: LineChart) {
+            chart.xAxis.apply {
+                valueFormatter = formatter
+                position = XAxis.XAxisPosition.BOTTOM
+                granularity = 1f
+                labelRotationAngle = -45f
+                setLabelCount(4, false)   // show every 4th label
+                textSize = 10f
+            }
+
+            chart.setPinchZoom(true)
+            chart.isDragEnabled = true
+            chart.setScaleEnabled(true)
+            chart.setScaleXEnabled(true)
+            chart.setScaleYEnabled(true)
+            chart.description.isEnabled = false
+            chart.invalidate()
         }
 
-        humChart.xAxis.apply {
-            valueFormatter = formatter
-            position = XAxis.XAxisPosition.BOTTOM
-            granularity = 1f
-            textSize = 10f
-        }
-
-        tempChart.invalidate()
-        humChart.invalidate()
+        setupChart(tempChart)
+        setupChart(humChart)
 
         // -----------------------------
-        // Home button
+        // HOME BUTTON
         // -----------------------------
         homeButton.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
