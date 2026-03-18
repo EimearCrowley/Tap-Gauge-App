@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ThermoCase"
+rootProject.name = "Tap Gauge"
 include(":app")
 

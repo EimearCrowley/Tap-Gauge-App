@@ -12,6 +12,7 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:src="@drawable/tyndall_logo"
+        android:contentDescription="@string/app_name"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,7 +26,7 @@
         android:text="TapGauge"
         android:textSize="30sp"
         android:textStyle="bold"
-        android:textColor="@android:color/white"
+        android:textColor="#000000"
         app:layout_constraintTop_toBottomOf="@id/logoImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +39,7 @@
         android:layout_height="wrap_content"
         android:text="NFC Pressure Reader"
         android:textSize="16sp"
-        android:textColor="@android:color/white"
+        android:textColor="#1A1A1A"
         app:layout_constraintTop_toBottomOf="@id/titleText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,6 +52,8 @@
         android:layout_height="wrap_content"
         android:text="Tap Sensor"
         android:textSize="18sp"
+        android:backgroundTint="#007BFF"
+        android:textColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/subtitleText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -75,7 +78,7 @@
             android:text="Pressure"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="@android:color/white"/>
+            android:textColor="#000000"/>
 
         <TextView
             android:id="@+id/pressureValue"
@@ -84,7 +87,7 @@
             android:text="-- bar"
             android:textSize="36sp"
             android:textStyle="bold"
-            android:textColor="@android:color/white"
+            android:textColor="#000000"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="25dp"/>
 
@@ -97,6 +100,8 @@
         android:layout_height="wrap_content"
         android:text="Save Reading"
         android:textSize="18sp"
+        android:backgroundTint="#007BFF"
+        android:textColor="@android:color/white"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/outputContainer"
         app:layout_constraintStart_toStartOf="parent"
@@ -109,9 +114,12 @@
         android:layout_width="200dp"
         android:layout_height="100dp"
         android:src="@drawable/mtu_logo"
+        android:contentDescription="@string/app_name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="20dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+

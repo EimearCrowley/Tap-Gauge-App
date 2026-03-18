@@ -9,8 +9,6 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.ValueFormatter
 import org.json.JSONObject
-import android.view.View
-
 
 class RoomDataActivity : AppCompatActivity() {
 
@@ -51,7 +49,7 @@ class RoomDataActivity : AppCompatActivity() {
         }
 
         // Chart setup
-        val pressureChart = findViewById<LineChart>(R.id.tempChart) // reuse existing chart view
+        val pressureChart = findViewById<LineChart>(R.id.pressureChart)
         val pressureEntries = ArrayList<Entry>()
         val timestamps = ArrayList<String>()
 
@@ -82,10 +80,6 @@ class RoomDataActivity : AppCompatActivity() {
         }
 
         setupChart(pressureChart)
-
-        // Hide humidity chart entirely
-        val humChart = findViewById<LineChart>(R.id.humChart)
-        humChart.visibility = View.GONE
 
         homeButton.setOnClickListener { finish() }
     }
