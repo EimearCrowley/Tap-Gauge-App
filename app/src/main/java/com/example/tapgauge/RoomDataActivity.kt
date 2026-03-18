@@ -1,4 +1,4 @@
-package com.example.thermocase
+package com.example.tapgauge
 
 import android.nfc.NfcAdapter
 import android.os.Bundle
@@ -9,6 +9,8 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.ValueFormatter
 import org.json.JSONObject
+import android.view.View
+
 
 class RoomDataActivity : AppCompatActivity() {
 
@@ -36,37 +38,31 @@ class RoomDataActivity : AppCompatActivity() {
         val rooms = JSONObject(roomsJson!!)
         val readings = rooms.getJSONArray(roomName)
 
+        // Display each reading
         for (i in 0 until readings.length()) {
             val r = readings.getJSONObject(i)
             val tv = TextView(this)
             tv.text =
-                "Temp: ${r.getString("temp")} °C\n" +
-                        "Hum: ${r.getString("hum")} %\n" +
+                "Pressure: ${r.getString("pressure")} hPa\n" +
                         "Time: ${r.getString("time")}"
             tv.textSize = 18f
             tv.setPadding(0, 0, 0, 30)
             readingContainer.addView(tv)
         }
 
-        val tempChart = findViewById<LineChart>(R.id.tempChart)
-        val humChart = findViewById<LineChart>(R.id.humChart)
-
-        val tempEntries = ArrayList<Entry>()
-        val humEntries = ArrayList<Entry>()
+        // Chart setup
+        val pressureChart = findViewById<LineChart>(R.id.tempChart) // reuse existing chart view
+        val pressureEntries = ArrayList<Entry>()
         val timestamps = ArrayList<String>()
 
         for (i in 0 until readings.length()) {
             val r = readings.getJSONObject(i)
-            tempEntries.add(Entry(i.toFloat(), r.getString("temp").toFloat()))
-            humEntries.add(Entry(i.toFloat(), r.getString("hum").toFloat()))
+            pressureEntries.add(Entry(i.toFloat(), r.getString("pressure").toFloat()))
             timestamps.add(r.getString("time"))
         }
 
-        val tempDataSet = LineDataSet(tempEntries, "Temperature (°C)")
-        val humDataSet = LineDataSet(humEntries, "Humidity (%)")
-
-        tempChart.data = LineData(tempDataSet)
-        humChart.data = LineData(humDataSet)
+        val pressureDataSet = LineDataSet(pressureEntries, "Pressure (hPa)")
+        pressureChart.data = LineData(pressureDataSet)
 
         val formatter = TimeAxisFormatter(timestamps)
 
@@ -85,8 +81,11 @@ class RoomDataActivity : AppCompatActivity() {
             chart.invalidate()
         }
 
-        setupChart(tempChart)
-        setupChart(humChart)
+        setupChart(pressureChart)
+
+        // Hide humidity chart entirely
+        val humChart = findViewById<LineChart>(R.id.humChart)
+        humChart.visibility = View.GONE
 
         homeButton.setOnClickListener { finish() }
     }
@@ -101,5 +100,6 @@ class RoomDataActivity : AppCompatActivity() {
         NfcAdapter.getDefaultAdapter(this)?.disableForegroundDispatch(this)
     }
 }
+
 
 

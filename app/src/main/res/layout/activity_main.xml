@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background">
 
-    <!-- Top Logo -->
+    <!-- Tyndall Logo -->
     <ImageView
         android:id="@+id/logoImage"
         android:layout_width="200dp"
@@ -15,48 +15,48 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="40dp"/>
+        android:layout_marginTop="30dp"/>
 
-    <!-- Title -->
+    <!-- App Title -->
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ThermoCase"
+        android:text="TapGauge"
         android:textSize="30sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/logoImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="8dp"/>
 
     <!-- Subtitle -->
     <TextView
         android:id="@+id/subtitleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="NFC Temperature and Humidity Reader"
+        android:text="NFC Pressure Reader"
         android:textSize="16sp"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/titleText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="4dp"/>
 
-    <!-- Start Scan Button -->
+    <!-- Scan Button -->
     <Button
         android:id="@+id/startScanButton"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:text="Start Scan"
+        android:text="Tap Sensor"
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/subtitleText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="20dp"/>
 
-    <!-- Output Section -->
+    <!-- Pressure Display -->
     <LinearLayout
         android:id="@+id/outputContainer"
         android:layout_width="wrap_content"
@@ -66,50 +66,36 @@
         app:layout_constraintTop_toBottomOf="@id/startScanButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="25dp">
 
         <TextView
-            android:id="@+id/tempLabel"
+            android:id="@+id/pressureLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Temperature"
-            android:textSize="20sp"
+            android:text="Pressure"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/white"/>
 
         <TextView
-            android:id="@+id/tempValue"
+            android:id="@+id/pressureValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="-- °C"
-            android:textSize="26sp"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="30dp"/>
-
-        <TextView
-            android:id="@+id/humLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Humidity"
-            android:textSize="20sp"
+            android:text="-- bar"
+            android:textSize="36sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/white"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="25dp"/>
 
-        <TextView
-            android:id="@+id/humValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="-- %"
-            android:textSize="26sp"
-            android:textColor="@android:color/black"/>
     </LinearLayout>
 
-    <!-- Record Data Button -->
+    <!-- Save Button -->
     <Button
         android:id="@+id/recordButton"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:text="Record Data"
+        android:text="Save Reading"
         android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/outputContainer"
@@ -117,7 +103,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="20dp"/>
 
-    <!-- Bottom MTU Logo -->
+    <!-- MTU Logo -->
     <ImageView
         android:id="@+id/mtuLogo"
         android:layout_width="200dp"
@@ -129,7 +115,3 @@
         android:layout_marginBottom="20dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-

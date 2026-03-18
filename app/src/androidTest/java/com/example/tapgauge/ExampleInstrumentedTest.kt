@@ -1,4 +1,4 @@
-package com.example.thermocase
+package com.example.tapgauge
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

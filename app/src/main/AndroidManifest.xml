@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.thermocase">
+    package="com.example.tapgauge">
 
     <uses-permission android:name="android.permission.NFC" />
     <uses-feature android:name="android.hardware.nfc" android:required="true" />
 
     <application
         android:allowBackup="true"
-        android:label="ThermoCase"
+        android:label="Tapgauge"
         android:icon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ThermoCase">
+        android:theme="@style/Theme.Tapgauge">
 
-        <activity android:name=".RoomDataActivity" />
+        <activity android:name="com.example.tapgauge.RoomDataActivity" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.tapgauge.MainActivity"
             android:exported="true">
 
             <!-- Launcher -->

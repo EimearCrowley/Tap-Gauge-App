@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.thermocase"
+    namespace = "com.example.tapgauge"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.example.thermocase"
+        applicationId = "com.example.tapgauge"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

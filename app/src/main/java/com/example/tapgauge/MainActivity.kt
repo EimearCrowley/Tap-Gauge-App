@@ -1,4 +1,4 @@
-package com.example.thermocase
+package com.example.tapgauge
 
 import android.app.AlertDialog
 import android.app.PendingIntent
@@ -24,35 +24,29 @@ class MainActivity : AppCompatActivity() {
 
     private var nfcAdapter: NfcAdapter? = null
 
-    private lateinit var tempValue: TextView
-    private lateinit var humValue: TextView
+    private lateinit var pressureValue: TextView
     private lateinit var recordButton: Button
     private lateinit var startScanButton: Button
 
-    private var lastTemp: String? = null
-    private var lastHum: String? = null
-
+    private var lastPressure: String? = null
     private var isScanning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        tempValue = findViewById(R.id.tempValue)
-        humValue = findViewById(R.id.humValue)
+        pressureValue = findViewById(R.id.pressureValue)
         recordButton = findViewById(R.id.recordButton)
         startScanButton = findViewById(R.id.startScanButton)
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
-        // Start / Stop scanning toggle
         startScanButton.setOnClickListener {
             if (!isScanning) {
                 isScanning = true
                 startScanButton.text = "Stop Scanning"
                 recordButton.visibility = View.GONE
-                tempValue.text = "-- °C"
-                humValue.text = "-- %"
+                pressureValue.text = "-- hPa"
                 Toast.makeText(this, "Ready to scan NFC tag", Toast.LENGTH_SHORT).show()
             } else {
                 isScanning = false
@@ -67,7 +61,6 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        // Delay foreground dispatch by 1 second to prevent Samsung NFC hijack
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             val pendingIntent = PendingIntent.getActivity(
@@ -90,24 +83,24 @@ class MainActivity : AppCompatActivity() {
         val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
         val ndef = Ndef.get(tag) ?: return
 
-        ndef.connect()
-        val message = ndef.ndefMessage ?: ndef.cachedNdefMessage
-        ndef.close()
+        try {
+            ndef.connect()
+            val message = ndef.ndefMessage ?: ndef.cachedNdefMessage
+            ndef.close()
 
-        val text = message?.let { extractText(it) } ?: return
+            val text = message?.let { extractText(it) } ?: return
+            val pressure = parsePressure(text) ?: return
 
-        val (temp, hum) = parseValues(text) ?: return
+            pressureValue.text = "$pressure hPa"
+            lastPressure = pressure
 
-        tempValue.text = "$temp °C"
-        humValue.text = "$hum %"
+            recordButton.visibility = View.VISIBLE
+            isScanning = false
+            startScanButton.text = "Start Scan"
 
-        lastTemp = temp
-        lastHum = hum
-
-        recordButton.visibility = View.VISIBLE
-
-        isScanning = false
-        startScanButton.text = "Start Scan"
+        } catch (e: Exception) {
+            Toast.makeText(this, "Failed to read tag", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun extractText(message: NdefMessage): String? {
@@ -132,10 +125,9 @@ class MainActivity : AppCompatActivity() {
         return String(textBytes, charset)
     }
 
-    private fun parseValues(text: String): Pair<String, String>? {
+    private fun parsePressure(text: String): String? {
         val regex = Regex("""([0-9]+(\.[0-9]+)?)""")
-        val nums = regex.findAll(text).map { it.value }.toList()
-        return if (nums.size >= 2) Pair(nums[0], nums[1]) else null
+        return regex.find(text)?.value
     }
 
     private fun showRoomDialog() {
@@ -181,8 +173,7 @@ class MainActivity : AppCompatActivity() {
             .format(Date())
 
         val reading = JSONObject().apply {
-            put("temp", lastTemp)
-            put("hum", lastHum)
+            put("pressure", lastPressure)
             put("time", timestamp)
         }
 
@@ -196,3 +187,4 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 }
+

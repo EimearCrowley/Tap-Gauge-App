@@ -1,4 +1,4 @@
-package com.example.thermocase
+package com.example.tapgauge
 
 import org.junit.Test
 
