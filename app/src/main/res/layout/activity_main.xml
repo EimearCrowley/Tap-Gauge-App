@@ -1,125 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/background">
+    android:layout_height="match_parent">
 
-    <!-- Tyndall Logo -->
-    <ImageView
-        android:id="@+id/logoImage"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:src="@drawable/tyndall_logo"
-        android:contentDescription="@string/app_name"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="30dp"/>
+    <!-- MAIN CONTENT -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background">
 
-    <!-- App Title -->
-    <TextView
-        android:id="@+id/titleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TapGauge"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        app:layout_constraintTop_toBottomOf="@id/logoImage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"/>
+        <!-- MENU BUTTON -->
+        <ImageView
+            android:id="@+id/menuButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_menu"
+            android:contentDescription="Menu"
+            android:padding="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_margin="16dp" />
 
-    <!-- Subtitle -->
-    <TextView
-        android:id="@+id/subtitleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="NFC Pressure Reader"
-        android:textSize="16sp"
-        android:textColor="#1A1A1A"
-        app:layout_constraintTop_toBottomOf="@id/titleText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="4dp"/>
+        <!-- Tyndall Logo -->
+        <ImageView
+            android:id="@+id/logoImage"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/tyndall_logo"
+            android:contentDescription="@string/app_name"
+            app:layout_constraintTop_toBottomOf="@id/menuButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp"/>
 
-    <!-- Scan Button -->
-    <Button
-        android:id="@+id/startScanButton"
-        android:layout_width="240dp"
-        android:layout_height="wrap_content"
-        android:text="Tap Sensor"
-        android:textSize="18sp"
-        android:backgroundTint="#007BFF"
-        android:textColor="@android:color/white"
-        app:layout_constraintTop_toBottomOf="@id/subtitleText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"/>
-
-    <!-- Pressure Display -->
-    <LinearLayout
-        android:id="@+id/outputContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/startScanButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="25dp">
-
+        <!-- App Title -->
         <TextView
-            android:id="@+id/pressureLabel"
+            android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pressure"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="#000000"/>
-
-        <TextView
-            android:id="@+id/pressureValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="-- bar"
-            android:textSize="36sp"
+            android:text="TapGauge"
+            android:textSize="30sp"
             android:textStyle="bold"
             android:textColor="#000000"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="25dp"/>
+            app:layout_constraintTop_toBottomOf="@id/logoImage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"/>
 
-    </LinearLayout>
+        <!-- Subtitle -->
+        <TextView
+            android:id="@+id/subtitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NFC Pressure Reader"
+            android:textSize="16sp"
+            android:textColor="#1A1A1A"
+            app:layout_constraintTop_toBottomOf="@id/titleText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="4dp"/>
 
-    <!-- Save Button -->
-    <Button
-        android:id="@+id/recordButton"
-        android:layout_width="240dp"
-        android:layout_height="wrap_content"
-        android:text="Save Reading"
-        android:textSize="18sp"
-        android:backgroundTint="#007BFF"
-        android:textColor="@android:color/white"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/outputContainer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"/>
+        <!-- SAFETY STATUS LABEL -->
+        <TextView
+            android:id="@+id/statusLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/subtitleText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- MTU Logo -->
-    <ImageView
-        android:id="@+id/mtuLogo"
-        android:layout_width="200dp"
-        android:layout_height="100dp"
-        android:src="@drawable/mtu_logo"
-        android:contentDescription="@string/app_name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="20dp"/>
+        <!-- Scan Button -->
+        <Button
+            android:id="@+id/startScanButton"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:text="Tap Sensor"
+            android:textSize="18sp"
+            android:backgroundTint="#007BFF"
+            android:textColor="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/statusLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="20dp"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Pressure Display -->
+        <LinearLayout
+            android:id="@+id/outputContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/startScanButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="25dp">
 
+            <TextView
+                android:id="@+id/pressureLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pressure"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#000000"/>
+
+            <TextView
+                android:id="@+id/pressureValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-- Pa"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/lastScanText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last Scan: --"
+                android:textSize="14sp"
+                android:textColor="#444444"
+                android:layout_marginBottom="25dp"/>
+        </LinearLayout>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/recordButton"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:text="Save Reading"
+            android:textSize="18sp"
+            android:backgroundTint="#007BFF"
+            android:textColor="@android:color/white"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/outputContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="20dp"/>
+
+        <!-- MTU Logo -->
+        <ImageView
+            android:id="@+id/mtuLogo"
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:src="@drawable/mtu_logo"
+            android:contentDescription="@string/app_name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="20dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- DRAWER MENU -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="260dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@android:color/white"
+        android:itemTextAppearance="@style/DrawerItemText"
+        app:headerLayout="@layout/drawer_header"
+        app:menu="@menu/drawer_menu" />
+
+</androidx.drawerlayout.widget.DrawerLayout>
 

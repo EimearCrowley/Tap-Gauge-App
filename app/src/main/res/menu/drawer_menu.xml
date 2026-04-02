@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/blankGroup"
+        android:checkableBehavior="single" />
+
+    <item
+        android:id="@+id/menu_clear_data"
+        android:title="Clear All Saved Blanks"
+        android:icon="@android:drawable/ic_menu_delete" />
+
+
+</menu>

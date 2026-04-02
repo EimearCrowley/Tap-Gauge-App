@@ -3,6 +3,7 @@ package com.example.tapgauge
 import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Intent
+import android.graphics.Color
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
@@ -11,9 +12,12 @@ import android.nfc.tech.Ndef
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.Menu
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
 import org.json.JSONArray
 import org.json.JSONObject
 import java.nio.charset.Charset
@@ -25,8 +29,14 @@ class MainActivity : AppCompatActivity() {
     private var nfcAdapter: NfcAdapter? = null
 
     private lateinit var pressureValue: TextView
+    private lateinit var statusLabel: TextView
     private lateinit var recordButton: Button
     private lateinit var startScanButton: Button
+    private lateinit var lastScanText: TextView
+
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
+    private lateinit var menuButton: ImageView
 
     private var lastPressure: String? = null
     private var isScanning = false
@@ -35,9 +45,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Drawer setup
+        drawerLayout = findViewById(R.id.drawerLayout)
+        navigationView = findViewById(R.id.navigationView)
+        menuButton = findViewById(R.id.menuButton)
+
+        menuButton.setOnClickListener {
+            drawerLayout.openDrawer(navigationView)
+        }
+
+        // UI elements
         pressureValue = findViewById(R.id.pressureValue)
+        statusLabel = findViewById(R.id.statusLabel)
         recordButton = findViewById(R.id.recordButton)
         startScanButton = findViewById(R.id.startScanButton)
+        lastScanText = findViewById(R.id.lastScanText)
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
@@ -46,7 +68,9 @@ class MainActivity : AppCompatActivity() {
                 isScanning = true
                 startScanButton.text = "Stop Scanning"
                 recordButton.visibility = View.GONE
-                pressureValue.text = "-- hPa"
+                pressureValue.text = "-- Pa"
+                statusLabel.text = ""
+                lastScanText.text = "Last Scan: --"
                 Toast.makeText(this, "Ready to scan NFC tag", Toast.LENGTH_SHORT).show()
             } else {
                 isScanning = false
@@ -55,11 +79,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        recordButton.setOnClickListener { showRoomDialog() }
+        recordButton.setOnClickListener { showBlankDialog() }
     }
 
     override fun onResume() {
         super.onResume()
+
+        loadBlanksIntoDrawer()
 
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -91,8 +117,13 @@ class MainActivity : AppCompatActivity() {
             val text = message?.let { extractText(it) } ?: return
             val pressure = parsePressure(text) ?: return
 
-            pressureValue.text = "$pressure hPa"
+            val pressurePa = pressure.toFloat() * 100
+            pressureValue.text = "${pressurePa.toInt()} Pa"
+
             lastPressure = pressure
+
+            updateSafetyStatus(pressurePa)
+            updateLastScanTime()
 
             recordButton.visibility = View.VISIBLE
             isScanning = false
@@ -101,6 +132,29 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Toast.makeText(this, "Failed to read tag", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun updateSafetyStatus(pa: Float) {
+        when {
+            pa < 50000 -> {
+                statusLabel.text = "SAFE"
+                statusLabel.setTextColor(Color.GREEN)
+            }
+            pa < 100000 -> {
+                statusLabel.text = "WARNING"
+                statusLabel.setTextColor(Color.YELLOW)
+            }
+            else -> {
+                statusLabel.text = "DANGER"
+                statusLabel.setTextColor(Color.RED)
+            }
+        }
+    }
+
+    private fun updateLastScanTime() {
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            .format(Date())
+        lastScanText.text = "Last Scan: $timestamp"
     }
 
     private fun extractText(message: NdefMessage): String? {
@@ -130,41 +184,41 @@ class MainActivity : AppCompatActivity() {
         return regex.find(text)?.value
     }
 
-    private fun showRoomDialog() {
-        val prefs = getSharedPreferences("rooms", MODE_PRIVATE)
-        val roomsJson = prefs.getString("data", "{}")
-        val rooms = JSONObject(roomsJson!!)
+    private fun showBlankDialog() {
+        val prefs = getSharedPreferences("blanks", MODE_PRIVATE)
+        val blanksJson = prefs.getString("data", "{}")
+        val blanks = JSONObject(blanksJson!!)
 
-        val roomNames = rooms.keys().asSequence().toList()
+        val blankNames = blanks.keys().asSequence().toList()
 
-        val dialogView = layoutInflater.inflate(R.layout.dialog_room, null)
-        val roomInput = dialogView.findViewById<EditText>(R.id.roomInput)
-        val roomSpinner = dialogView.findViewById<Spinner>(R.id.roomSpinner)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_blank, null)
+        val blankInput = dialogView.findViewById<EditText>(R.id.blankInput)
+        val blankSpinner = dialogView.findViewById<Spinner>(R.id.blankSpinner)
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, roomNames)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, blankNames)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        roomSpinner.adapter = adapter
+        blankSpinner.adapter = adapter
 
         AlertDialog.Builder(this)
-            .setTitle("Select or Create Room")
+            .setTitle("Select or Create Blank")
             .setView(dialogView)
             .setPositiveButton("Save") { _, _ ->
-                val typedName = roomInput.text.toString().trim()
-                val selectedName = roomSpinner.selectedItem?.toString()
-                val roomName = if (typedName.isNotEmpty()) typedName else selectedName
-                if (roomName != null) saveReading(roomName)
+                val typedName = blankInput.text.toString().trim()
+                val selectedName = blankSpinner.selectedItem?.toString()
+                val blankId = if (typedName.isNotEmpty()) typedName else selectedName
+                if (blankId != null) saveGauge(blankId)
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
 
-    private fun saveReading(roomName: String) {
-        val prefs = getSharedPreferences("rooms", MODE_PRIVATE)
-        val roomsJson = prefs.getString("data", "{}")
-        val rooms = JSONObject(roomsJson!!)
+    private fun saveGauge(blankId: String) {
+        val prefs = getSharedPreferences("blanks", MODE_PRIVATE)
+        val blanksJson = prefs.getString("data", "{}")
+        val blanks = JSONObject(blanksJson!!)
 
-        val readings = if (rooms.has(roomName)) {
-            rooms.getJSONArray(roomName)
+        val readings = if (blanks.has(blankId)) {
+            blanks.getJSONArray(blankId)
         } else {
             JSONArray()
         }
@@ -178,13 +232,62 @@ class MainActivity : AppCompatActivity() {
         }
 
         readings.put(reading)
-        rooms.put(roomName, readings)
+        blanks.put(blankId, readings)
 
-        prefs.edit().putString("data", rooms.toString()).apply()
+        prefs.edit().putString("data", blanks.toString()).apply()
 
-        val intent = Intent(this, RoomDataActivity::class.java)
-        intent.putExtra("roomName", roomName)
+        val intent = Intent(this, BlankDataActivity::class.java)
+        intent.putExtra("blankId", blankId)
         startActivity(intent)
     }
-}
 
+    private fun loadBlanksIntoDrawer() {
+        val prefs = getSharedPreferences("blanks", MODE_PRIVATE)
+        val blanksJson = prefs.getString("data", "{}")
+        val blanks = JSONObject(blanksJson!!)
+
+        val blankNames = blanks.keys().asSequence().toList()
+
+        val menu = navigationView.menu
+        menu.removeGroup(R.id.blankGroup)
+
+        val groupId = R.id.blankGroup
+
+        for (blank in blankNames) {
+            val item = menu.add(groupId, Menu.NONE, Menu.NONE, blank)
+            item.setIcon(R.drawable.ic_blank)
+        }
+
+        navigationView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.menu_clear_data -> {
+                    confirmClearData()
+                    true
+                }
+
+                else -> {
+                    val blankId = item.title.toString()
+                    val intent = Intent(this, BlankDataActivity::class.java)
+                    intent.putExtra("blankId", blankId)
+                    startActivity(intent)
+                    drawerLayout.closeDrawers()
+                    true
+                }
+            }
+        }
+    }
+
+    private fun confirmClearData() {
+        AlertDialog.Builder(this)
+            .setTitle("Clear All Data")
+            .setMessage("This will remove all saved blanks and readings. Continue?")
+            .setPositiveButton("Yes") { _, _ ->
+                val prefs = getSharedPreferences("blanks", MODE_PRIVATE)
+                prefs.edit().clear().apply()
+                loadBlanksIntoDrawer()
+                Toast.makeText(this, "All blanks cleared", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+}

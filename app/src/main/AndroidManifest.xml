@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Tapgauge">
 
-        <activity android:name="com.example.tapgauge.RoomDataActivity" />
+        <activity android:name="com.example.tapgauge.BlankDataActivity" />
 
         <activity
             android:name="com.example.tapgauge.MainActivity"
