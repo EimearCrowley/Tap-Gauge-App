@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Drawer setup
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.navigationView)
         menuButton = findViewById(R.id.menuButton)
@@ -54,7 +53,6 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.openDrawer(navigationView)
         }
 
-        // UI elements
         pressureValue = findViewById(R.id.pressureValue)
         statusLabel = findViewById(R.id.statusLabel)
         recordButton = findViewById(R.id.recordButton)
@@ -68,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                 isScanning = true
                 startScanButton.text = "Stop Scanning"
                 recordButton.visibility = View.GONE
-                pressureValue.text = "-- Pa"
+                pressureValue.text = "-- psi"
                 statusLabel.text = ""
                 lastScanText.text = "Last Scan: --"
                 Toast.makeText(this, "Ready to scan NFC tag", Toast.LENGTH_SHORT).show()
@@ -115,14 +113,14 @@ class MainActivity : AppCompatActivity() {
             ndef.close()
 
             val text = message?.let { extractText(it) } ?: return
-            val pressure = parsePressure(text) ?: return
+            val pressurePsiString = parsePressure(text) ?: return
 
-            val pressurePa = pressure.toFloat() * 100
-            pressureValue.text = "${pressurePa.toInt()} Pa"
+            val pressurePsi = pressurePsiString.toFloat()
+            pressureValue.text = String.format("%.2f psi", pressurePsi)
 
-            lastPressure = pressure
+            lastPressure = pressurePsiString
 
-            updateSafetyStatus(pressurePa)
+            updateSafetyStatus(pressurePsi)
             updateLastScanTime()
 
             recordButton.visibility = View.VISIBLE
@@ -134,13 +132,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateSafetyStatus(pa: Float) {
+    private fun updateSafetyStatus(psi: Float) {
         when {
-            pa < 50000 -> {
+            psi < 7.25 -> {
                 statusLabel.text = "SAFE"
                 statusLabel.setTextColor(Color.GREEN)
             }
-            pa < 100000 -> {
+            psi < 14.5 -> {
                 statusLabel.text = "WARNING"
                 statusLabel.setTextColor(Color.YELLOW)
             }
@@ -179,9 +177,11 @@ class MainActivity : AppCompatActivity() {
         return String(textBytes, charset)
     }
 
+    // ⭐ FIXED: Now reads the THIRD number (pressure)
     private fun parsePressure(text: String): String? {
         val regex = Regex("""([0-9]+(\.[0-9]+)?)""")
-        return regex.find(text)?.value
+        val nums = regex.findAll(text).map { it.value }.toList()
+        return if (nums.size >= 3) nums[2] else null
     }
 
     private fun showBlankDialog() {
