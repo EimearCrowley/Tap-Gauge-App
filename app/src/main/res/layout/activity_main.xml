@@ -116,7 +116,7 @@
                 android:id="@+id/pressureValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="-- Pa"
+                android:text="-- psi"
                 android:textSize="36sp"
                 android:textStyle="bold"
                 android:textColor="#000000"
