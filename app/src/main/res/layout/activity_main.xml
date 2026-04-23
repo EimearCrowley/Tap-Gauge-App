@@ -22,19 +22,19 @@
             android:padding="8dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_margin="16dp" />
+            android:layout_margin="12dp" />
 
         <!-- Tyndall Logo -->
         <ImageView
             android:id="@+id/logoImage"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
             android:src="@drawable/tyndall_logo"
             android:contentDescription="@string/app_name"
             app:layout_constraintTop_toBottomOf="@id/menuButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="4dp"/>
 
         <!-- App Title -->
         <TextView
@@ -42,13 +42,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TapGauge"
-            android:textSize="30sp"
+            android:textSize="28sp"
             android:textStyle="bold"
             android:textColor="#000000"
             app:layout_constraintTop_toBottomOf="@id/logoImage"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="4dp"/>
 
         <!-- Subtitle -->
         <TextView
@@ -56,12 +56,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="NFC Pressure Reader"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:textColor="#1A1A1A"
             app:layout_constraintTop_toBottomOf="@id/titleText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="2dp"/>
 
         <!-- SAFETY STATUS LABEL -->
         <TextView
@@ -69,10 +69,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            android:textSize="28sp"
+            android:textSize="26sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="6dp"
             app:layout_constraintTop_toBottomOf="@id/subtitleText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -89,7 +89,7 @@
             app:layout_constraintTop_toBottomOf="@id/statusLabel"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="16dp"/>
 
         <!-- Pressure Display -->
         <LinearLayout
@@ -101,14 +101,14 @@
             app:layout_constraintTop_toBottomOf="@id/startScanButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="25dp">
+            android:layout_marginTop="18dp">
 
             <TextView
                 android:id="@+id/pressureLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pressure"
-                android:textSize="22sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="#000000"/>
 
@@ -117,11 +117,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="-- psi"
-                android:textSize="36sp"
+                android:textSize="34sp"
                 android:textStyle="bold"
                 android:textColor="#000000"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="6dp"/>
 
             <TextView
                 android:id="@+id/lastScanText"
@@ -130,7 +130,7 @@
                 android:text="Last Scan: --"
                 android:textSize="14sp"
                 android:textColor="#444444"
-                android:layout_marginBottom="25dp"/>
+                android:layout_marginBottom="18dp"/>
         </LinearLayout>
 
         <!-- Save Button -->
@@ -146,19 +146,20 @@
             app:layout_constraintTop_toBottomOf="@id/outputContainer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="90dp"/>
 
         <!-- MTU Logo -->
         <ImageView
             android:id="@+id/mtuLogo"
-            android:layout_width="200dp"
-            android:layout_height="100dp"
+            android:layout_width="180dp"
+            android:layout_height="90dp"
             android:src="@drawable/mtu_logo"
             android:contentDescription="@string/app_name"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="16dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -174,4 +175,9 @@
         app:menu="@menu/drawer_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
+
+
+
+
+
 
