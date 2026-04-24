@@ -48,11 +48,11 @@ class BlankDataActivity : AppCompatActivity() {
             val r = readings.getJSONObject(i)
             val tv = TextView(this)
 
-            val pressurePa = r.getString("pressure").toFloat() * 100
-            val status = getSafetyStatus(pressurePa)
+            val pressurePsi = r.getString("pressure").toFloat()
+            val status = getSafetyStatus(pressurePsi)
 
             tv.text =
-                "Pressure: ${pressurePa.toInt()} Pa\n" +
+                "Pressure: ${String.format("%.2f", pressurePsi)} psi\n" +
                         "Status: $status\n" +
                         "Time: ${r.getString("time")}"
 
@@ -68,7 +68,7 @@ class BlankDataActivity : AppCompatActivity() {
             readingContainer.addView(tv)
 
             shareBuilder.append(
-                "Pressure: ${pressurePa.toInt()} Pa\n" +
+                "Pressure: ${String.format("%.2f", pressurePsi)} psi\n"+
                         "Status: $status\n" +
                         "Time: ${r.getString("time")}\n\n"
             )
@@ -80,13 +80,12 @@ class BlankDataActivity : AppCompatActivity() {
 
         for (i in 0 until readings.length()) {
             val r = readings.getJSONObject(i)
-            val pressurePa = r.getString("pressure").toFloat() * 100
-
-            pressureEntries.add(Entry(i.toFloat(), pressurePa))
+            val pressurePsi = r.getString("pressure").toFloat()
+            pressureEntries.add(Entry(i.toFloat(), pressurePsi))
             timestamps.add(r.getString("time"))
         }
 
-        val pressureDataSet = LineDataSet(pressureEntries, "Pressure (Pa)").apply {
+        val pressureDataSet = LineDataSet(pressureEntries, "Pressure (psi)").apply {
             color = Color.BLUE
             lineWidth = 2f
             setDrawCircles(true)
@@ -136,10 +135,10 @@ class BlankDataActivity : AppCompatActivity() {
         }
     }
 
-    private fun getSafetyStatus(pa: Float): String {
+    private fun getSafetyStatus(psi: Float): String {
         return when {
-            pa < 50000 -> "SAFE"
-            pa < 100000 -> "WARNING"
+            psi < 7.25 -> "SAFE"
+            psi < 14.5 -> "WARNING"
             else -> "DANGER"
         }
     }

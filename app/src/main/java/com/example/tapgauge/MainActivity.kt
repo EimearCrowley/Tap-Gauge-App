@@ -181,6 +181,7 @@ class MainActivity : AppCompatActivity() {
     private fun parsePressure(text: String): String? {
         val regex = Regex("""([0-9]+(\.[0-9]+)?)""")
         val nums = regex.findAll(text).map { it.value }.toList()
+        //3rd value to account for temp & hum
         return if (nums.size >= 3) nums[2] else null
     }
 
